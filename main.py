@@ -15,6 +15,16 @@ MOVIES = [
     {'title': 'La La Land', 'director': 'Damien Chazelle', 'genre': 'musical', 'year': 2016},
 ]
 
+@app.get('/')
+async def movie_api_first_page():
+  return "Welcome to the Movie API"
+
 @app.get('/movies')
 async def read_all_movies():
   return MOVIES
+
+@app.get('/movies/{movie_title}')
+async def read_movie(movie_title : str):
+  for movie in MOVIES:
+    if movie.get('title').casefold == movie_title.casefold():
+      return movie
