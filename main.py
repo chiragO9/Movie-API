@@ -26,5 +26,6 @@ async def read_all_movies():
 @app.get('/movies/{movie_title}')
 async def read_movie(movie_title : str):
   for movie in MOVIES:
-    if movie.get('title').casefold == movie_title.casefold():
+    if movie.get('title', '').casefold() == movie_title.casefold():
       return movie
+  return {"Error" :f"{movie_title}  Movie not found"}
