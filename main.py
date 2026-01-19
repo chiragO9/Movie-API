@@ -56,3 +56,11 @@ async def read_movies_by_genre(genre: str):
         return {"Error": f"No movies found for genre '{genre}'"}
     
     return movies_to_return
+
+@app.get('/movies/byYear/')
+async def read_movies_by_year(year: int):
+    movies_to_return = []
+    for movie in MOVIES:
+        if movie.get('year',0) == 'year':
+            movies_to_return.append(movie)
+    return movies_to_return
