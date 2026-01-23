@@ -45,9 +45,64 @@ The API will be available at `http://127.0.0.1:8000`
 ## Screenshots
 
 ### Interactive API Documentation
-![API Documentation](images/2_get_requests.png)
+![API Documentation](images/first.png)
+![API Documentation](images/second.png)
 
+# Movie API
 
+A simple FastAPI application for querying a movie database.
+
+## Installation
+```bash
+pip install fastapi uvicorn
+```
+
+## Running the API
+```bash
+uvicorn main:app --reload
+```
+
+API runs at `http://127.0.0.1:8000`
+
+## Endpoints
+
+### `GET /`
+Welcome message
+
+### `GET /movies`
+Returns all movies
+
+### `GET /movies/{movie_title}`
+Get movie by title (case-insensitive)
+
+**Example:** `/movies/inception`
+
+### `GET /movies/bydirector/?director={name}`
+Filter movies by director (case-insensitive)
+
+**Example:** `/movies/bydirector/?director=Christopher Nolan`
+
+### `GET /movies/bygenre/?genre={genre}`
+Filter movies by genre (case-insensitive)
+
+**Example:** `/movies/bygenre/?genre=sci-fi`
+
+### `GET /movies/byyear/?year={year}`
+Filter movies by release year
+
+**Example:** `/movies/byyear/?year=2010`
+
+## Response Format
+
+All endpoints return JSON. Movie objects contain:
+- `title` (string)
+- `director` (string)
+- `genre` (string)
+- `year` (integer)
+
+## Error Responses
+
+Returns 404 with detail message when no movies match the query.
 
 ## 👤 Author
 
