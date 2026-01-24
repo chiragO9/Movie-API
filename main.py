@@ -58,9 +58,43 @@ async def read_movies_by_year(year: int):
     
     return movies_to_return
 
+@app.get("/movies/director_genre/")
+async def read_director_and_genre(director: str, genre: str):
+    movies_to_return = []
+    for movie in MOVIES:
+        if (movie.get('director', '').casefold() == director.casefold() and 
+            movie.get('genre', '').casefold() == genre.casefold()):
+            movies_to_return.append(movie)
+    
+    if not movies_to_return:
+        raise HTTPException(status_code=404, detail=f"No movies found for director '{director}' and genre '{genre}'")
+    
+    return movies_to_return
+
+@app.get("/movies/search/")
+async def search_movies(q: str):
+    movies_to_return = []
+    search_term = q.strip().casefold()
+    
+    if not search_term:
+        raise HTTPException(status_code=400, detail="Search query cannot be empty")
+    
+    for movie in MOVIES:
+        title = movie.get('title', '').casefold()
+        director = movie.get('director', '').casefold()
+        genre = movie.get('genre', '').casefold()
+        
+        if search_term in title or search_term in director or search_term in genre:
+            movies_to_return.append(movie)
+    
+    if not movies_to_return:
+        raise HTTPException(status_code=404, detail=f"No movies found for search '{q}'")
+    
+    return movies_to_return
+
 @app.get('/movies/{movie_title}')  
 async def read_movie(movie_title: str):
     for movie in MOVIES:
         if movie.get('title', '').casefold() == movie_title.casefold():
             return movie
-    raise HTTPException(status_code=404, detail=f"Movie '{movie_title}' not found")
+    raise HTTPException(status_code=404, detail=f"Movie '{movie_title}' not found") 
