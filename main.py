@@ -92,6 +92,24 @@ async def search_movies(q: str):
     
     return movies_to_return
 
+@app.post("/movies/create_movie")
+async def create_movie(new_movie=Body()):
+    # Basic validation
+    required_fields = ['title', 'director', 'genre', 'year']
+    for field in required_fields:
+        if field not in new_movie:
+            raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
+    
+    # Check if movie already exists
+    for movie in MOVIES:
+        if movie.get('title', '').casefold() == new_movie.get('title', '').casefold():
+            raise HTTPException(status_code=400, detail=f"Movie '{new_movie.get('title')}' already exists")
+    
+    MOVIES.append(new_movie)
+    return {"message": f"Movie '{new_movie.get('title')}' created successfully", "movie": new_movie}
+
+
+
 @app.get('/movies/{movie_title}')  
 async def read_movie(movie_title: str):
     for movie in MOVIES:
