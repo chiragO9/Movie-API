@@ -111,4 +111,38 @@ async def read_movie(movie_title: str):
     for movie in MOVIES:
         if movie.get('title', '').casefold() == movie_title.casefold():
             return movie
-    raise HTTPException(status_code=404, detail=f"Movie '{movie_title}' not found") 
+    raise HTTPException(status_code=404, detail=f"Movie '{movie_title}' not found")
+
+@app.patch('/movies/{movie_title}')
+async def update_movie(movie_title: str, updated_fields=Body()):
+
+    allowed_fields = {'director', 'genre', 'year'}
+    
+    invalid_fields = set(updated_fields.keys()) - allowed_fields
+    if invalid_fields:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Cannot update field(s): {invalid_fields}. Allowed: {allowed_fields}"
+        )
+
+    for movie in MOVIES:
+        if movie.get('title', '').casefold() == movie_title.casefold():
+
+            # Update ONLY the fields that were sent — leave everything else alone
+            for field, value in updated_fields.items():
+                movie[field] = value
+
+            return {"message": f"Movie '{movie_title}' updated successfully", "movie": movie}
+
+    raise HTTPException(status_code=404, detail=f"Movie '{movie_title}' not found")
+
+@app.delete('/movies/{movie_title}')
+async def delete_movie(movie_title: str):
+
+    for i, movie in enumerate(MOVIES):
+        if movie.get('title', '').casefold() == movie_title.casefold():
+
+            MOVIES.pop(i)   # Remove the movie at position i
+            return {"message": f"Movie '{movie_title}' deleted successfully"}
+
+    raise HTTPException(status_code=404, detail=f"Movie '{movie_title}' not found")
