@@ -16,3 +16,5 @@ ENV/
 # OS
 .DS_Store  
 fastapi-testing
+main2.py
+db.py
