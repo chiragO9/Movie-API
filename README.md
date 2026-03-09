@@ -60,10 +60,11 @@ The API will be available at `http://127.0.0.1:8000`
   - Returns all movies in the database
   - **Response:** Array of movie objects
 
-### Get Movie by Title
-- **`GET /movies/{movie_title}`**
-  - Get a specific movie by title (case-insensitive)
-  - **Example:** `/movies/inception`
+### Get Movie by ID
+- **`GET /movies/{movie_id}`**
+  - Get a specific movie by its ID
+  - **Example:** `/movies/1`
+  - **Path Param:** `movie_id` must be a positive integer
   - **Response:** Single movie object or 404 error
 
 ### Filter by Director
@@ -80,7 +81,7 @@ The API will be available at `http://127.0.0.1:8000`
 
 ### Filter by Year
 - **`GET /movies/byyear/?year={year}`**
-  - Filter movies by release year
+  - Filter movies by release year (valid range: 1888–2030)
   - **Example:** `/movies/byyear/?year=2010`
   - **Response:** Array of matching movies or 404 error
 
@@ -95,36 +96,73 @@ The API will be available at `http://127.0.0.1:8000`
   - Search across title, director, and genre (case-insensitive)
   - **Example:** `/movies/search/?q=nolan`
   - **Response:** Array of matching movies or 404 error
-  - **Note:** Returns 400 error if search query is empty
 
 ### Create Movie
 - **`POST /movies/create_movie`**
-  - Add a new movie to the database
+  - Add a new movie to the database (ID is auto-assigned)
   - **Request Body:**
 ```json
-    {
-      "title": "Movie Title",
-      "director": "Director Name",
-      "genre": "Genre",
-      "year": 2024
-    }
+{
+  "title": "Movie Title",
+  "director": "Director Name",
+  "genre": "Genre",
+  "year": 2024
+}
 ```
-  - **Response:** Success message with created movie object
-  - **Validation:** 
-    - All fields (title, director, genre, year) are required (400 error if missing)
+  - **Response:** `201 Created`
+  - **Validation:**
+    - `title` and `director`: 1–100 characters
+    - `genre`: 1–50 characters
+    - `year`: between 1888 and 2030
     - Movie title must be unique (400 error if duplicate)
 
-##  Response Format
+### Replace Movie (Full Update)
+- **`PUT /movies/update_movie`**
+  - Fully replace an existing movie by ID
+  - **Request Body:** Same as Create Movie but `id` is required
+```json
+{
+  "id": 1,
+  "title": "Updated Title",
+  "director": "Updated Director",
+  "genre": "Updated Genre",
+  "year": 2024
+}
+```
+  - **Response:** `204 No Content` or 404 error
+
+### Update Movie (Partial Update)
+- **`PATCH /movies/update_movie`**
+  - Partially update an existing movie by ID — only provided fields are changed
+  - **Request Body:** Same structure as PUT; `id` is required, all other fields are optional
+```json
+{
+  "id": 1,
+  "genre": "thriller"
+}
+```
+  - **Response:** `204 No Content` or 404 error
+
+### Delete Movie
+- **`DELETE /movies/{movie_id}`**
+  - Delete a movie by its ID
+  - **Example:** `/movies/3`
+  - **Path Param:** `movie_id` must be a positive integer
+  - **Response:** `204 No Content` or 404 error
+
+## Response Format
 
 All endpoints return JSON. Movie objects contain:
-- `title` (string) - Movie title
-- `director` (string) - Director name
-- `genre` (string) - Movie genre
-- `year` (integer) - Release year
+- `id` (integer) — Auto-assigned unique identifier
+- `title` (string) — Movie title
+- `director` (string) — Director name
+- `genre` (string) — Movie genre
+- `year` (integer) — Release year
 
 **Example Movie Object:**
 ```json
 {
+  "id": 1,
   "title": "Inception",
   "director": "Christopher Nolan",
   "genre": "sci-fi",
@@ -134,11 +172,9 @@ All endpoints return JSON. Movie objects contain:
 
 ## Error Responses
 
-- **404 Not Found** - Returned when no movies match the query or movie doesn't exist
-- **400 Bad Request** - Returned for:
-  - Missing required fields in POST request
-  - Duplicate movie title
-  - Empty search query
+- **404 Not Found** — No movies match the query or movie doesn't exist
+- **400 Bad Request** — Missing required fields, duplicate movie title, or invalid input
+- **422 Unprocessable Entity** — Request body fails validation constraints
 
 **Error Response Format:**
 ```json
@@ -149,16 +185,19 @@ All endpoints return JSON. Movie objects contain:
 
 ## Sample Movie Database
 
-The API comes pre-loaded with 9 movies including:
-- Inception (2010) - Christopher Nolan
-- The Dark Knight (2008) - Christopher Nolan
-- Interstellar (2014) - Christopher Nolan
-- Titanic (1997) - James Cameron
-- Forrest Gump (1994) - Robert Zemeckis
-- Gladiator (2000) - Ridley Scott
-- The Godfather (1972) - Francis Ford Coppola
-- Parasite (2019) - Bong Joon-ho
-- La La Land (2016) - Damien Chazelle
+The API comes pre-loaded with 9 movies:
+
+| # | Title | Director | Genre | Year |
+|---|-------|----------|-------|------|
+| 1 | Inception | Christopher Nolan | sci-fi | 2010 |
+| 2 | The Dark Knight | Christopher Nolan | action | 2008 |
+| 3 | Interstellar | Christopher Nolan | sci-fi | 2014 |
+| 4 | Titanic | James Cameron | romance | 1997 |
+| 5 | Forrest Gump | Robert Zemeckis | drama | 1994 |
+| 6 | Gladiator | Ridley Scott | historical | 2000 |
+| 7 | The Godfather | Francis Ford Coppola | crime | 1972 |
+| 8 | Parasite | Bong Joon-ho | thriller | 2019 |
+| 9 | La La Land | Damien Chazelle | musical | 2016 |
 
 ## Author
 
