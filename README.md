@@ -45,8 +45,8 @@ The API will be available at `http://127.0.0.1:8000`
 ## Screenshots
 
 ### Interactive API Documentation
-![API Documentation](images/f1.png)
-![API Documentation](images/f2.png)
+![API Documentation](images/1.png)
+![API Documentation](images/2.png)
 
 ## API Endpoints
 
