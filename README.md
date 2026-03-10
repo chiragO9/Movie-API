@@ -1,12 +1,24 @@
 # 🎬 Movie API
 
-A RESTful API built with FastAPI for managing a movie collection. Features complete CRUD operations, advanced filtering, search functionality, and proper error handling.
+A RESTful API built with FastAPI for managing a movie collection. Features complete CRUD operations, advanced filtering, search functionality, proper error handling, and persistent database storage via SQLAlchemy.
 
 ## Technologies
 
 - Python 3.8+
 - FastAPI
 - Uvicorn
+- SQLAlchemy
+- SQLite (local) / PostgreSQL (production)
+
+## Project Structure
+```
+MOVIE-API/
+├── main.py          ← API routes and logic
+├── database.py      ← DB engine, session, and base config
+├── models.py        ← SQLAlchemy Movie model
+├── requirements.txt
+└── .gitignore
+```
 
 ## 📦 Installation
 
@@ -30,7 +42,12 @@ source fastapienv/bin/activate
 
 3. **Install dependencies**
 ```bash
-pip install fastapi uvicorn
+pip install -r requirements.txt
+```
+
+Or manually:
+```bash
+pip install fastapi uvicorn sqlalchemy psycopg2-binary
 ```
 
 ## Running the API
@@ -41,6 +58,10 @@ uvicorn main:app --reload
 The API will be available at `http://127.0.0.1:8000`
 
 **Interactive Documentation:** `http://127.0.0.1:8000/docs`
+
+On first startup, the API will automatically:
+- Create the `movies.db` SQLite database and the movies table
+- Seed it with 9 starter movies (only if the table is empty)
 
 ## Screenshots
 
@@ -109,7 +130,7 @@ The API will be available at `http://127.0.0.1:8000`
   "year": 2024
 }
 ```
-  - **Response:** `201 Created`
+  - **Response:** `201 Created` with the new movie object (including its assigned `id`)
   - **Validation:**
     - `title` and `director`: 1–100 characters
     - `genre`: 1–50 characters
@@ -119,7 +140,7 @@ The API will be available at `http://127.0.0.1:8000`
 ### Replace Movie (Full Update)
 - **`PUT /movies/update_movie`**
   - Fully replace an existing movie by ID
-  - **Request Body:** Same as Create Movie but `id` is required
+  - **Request Body:** Same as Create, but `id` is required
 ```json
 {
   "id": 1,
@@ -133,8 +154,8 @@ The API will be available at `http://127.0.0.1:8000`
 
 ### Update Movie (Partial Update)
 - **`PATCH /movies/update_movie`**
-  - Partially update an existing movie by ID — only provided fields are changed
-  - **Request Body:** Same structure as PUT; `id` is required, all other fields are optional
+  - Partially update an existing movie — only provided fields are changed
+  - **Request Body:** `id` is required, all other fields are optional
 ```json
 {
   "id": 1,
@@ -185,7 +206,7 @@ All endpoints return JSON. Movie objects contain:
 
 ## Sample Movie Database
 
-The API comes pre-loaded with 9 movies:
+The API auto-seeds with 9 movies on first run:
 
 | # | Title | Director | Genre | Year |
 |---|-------|----------|-------|------|
@@ -199,6 +220,19 @@ The API comes pre-loaded with 9 movies:
 | 8 | Parasite | Bong Joon-ho | thriller | 2019 |
 | 9 | La La Land | Damien Chazelle | musical | 2016 |
 
+## Deployment (Render)
+
+This API supports deployment on [Render](https://render.com) with a PostgreSQL database.
+
+Set the `DATABASE_URL` environment variable in your Render service — it is provided automatically when you attach a Render PostgreSQL instance. The app handles the `postgres://` → `postgresql://` URL fix automatically.
+
+Make sure `movies.db` is listed in your `.gitignore` before pushing:
+```
+movies.db
+__pycache__/
+fastapienv/
+```
+
 ## Author
 
 **Chirag**
@@ -206,4 +240,4 @@ The API comes pre-loaded with 9 movies:
 
 ---
 
-**Note:** This API uses in-memory storage. All data will be reset when the server restarts.
+> **Data persistence:** Movie data is stored in a SQLite database locally (`movies.db`) and persists across server restarts. In production, a PostgreSQL database is used via the `DATABASE_URL` environment variable.
