@@ -220,19 +220,6 @@ The API auto-seeds with 9 movies on first run:
 | 8 | Parasite | Bong Joon-ho | thriller | 2019 |
 | 9 | La La Land | Damien Chazelle | musical | 2016 |
 
-## Deployment (Render)
-
-This API supports deployment on [Render](https://render.com) with a PostgreSQL database.
-
-Set the `DATABASE_URL` environment variable in your Render service — it is provided automatically when you attach a Render PostgreSQL instance. The app handles the `postgres://` → `postgresql://` URL fix automatically.
-
-Make sure `movies.db` is listed in your `.gitignore` before pushing:
-```
-movies.db
-__pycache__/
-fastapienv/
-```
-
 ## Author
 
 **Chirag**
