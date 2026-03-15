@@ -55,6 +55,11 @@ The API will be available at `http://127.0.0.1:8000`
 
 **Interactive Documentation:** `http://127.0.0.1:8000/docs`
 
+## Screenshots
+![API Documentation](images/f1.png)
+![API Documentation](images/f2.png)
+![API Documentation](images/f3.png)
+
 > **Note:** Data is stored in-memory and will reset on server restart.
 
 ## API Endpoints
