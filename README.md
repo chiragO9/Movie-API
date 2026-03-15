@@ -1,23 +1,19 @@
 # 🎬 Movie API
 
-A RESTful API built with FastAPI for managing a movie collection. Features complete CRUD operations, advanced filtering, search functionality, proper error handling, and persistent database storage via SQLAlchemy.
+A RESTful API built with FastAPI for managing a movie collection. Features complete CRUD operations, advanced filtering, search functionality, and proper error handling.
 
 ## Technologies
 
 - Python 3.8+
 - FastAPI
 - Uvicorn
-- SQLAlchemy
-- SQLite (local) / PostgreSQL (production)
+- Pydantic
 
 ## Project Structure
 ```
 MOVIE-API/
-├── main.py          ← API routes and logic
-├── database.py      ← DB engine, session, and base config
-├── models.py        ← SQLAlchemy Movie model
-├── requirements.txt
-└── .gitignore
+├── main.py          ← API routes, models, and logic
+└── requirements.txt
 ```
 
 ## 📦 Installation
@@ -47,7 +43,7 @@ pip install -r requirements.txt
 
 Or manually:
 ```bash
-pip install fastapi uvicorn sqlalchemy psycopg2-binary
+pip install fastapi uvicorn
 ```
 
 ## Running the API
@@ -59,15 +55,7 @@ The API will be available at `http://127.0.0.1:8000`
 
 **Interactive Documentation:** `http://127.0.0.1:8000/docs`
 
-On first startup, the API will automatically:
-- Create the `movies.db` SQLite database and the movies table
-- Seed it with 9 starter movies (only if the table is empty)
-
-## Screenshots
-
-### Interactive API Documentation
-![API Documentation](images/1.png)
-![API Documentation](images/2.png)
+> **Note:** Data is stored in-memory and will reset on server restart.
 
 ## API Endpoints
 
@@ -78,7 +66,7 @@ On first startup, the API will automatically:
 
 ### Get All Movies
 - **`GET /movies`**
-  - Returns all movies in the database
+  - Returns all movies
   - **Response:** Array of movie objects
 
 ### Get Movie by ID
@@ -120,7 +108,7 @@ On first startup, the API will automatically:
 
 ### Create Movie
 - **`POST /movies/create_movie`**
-  - Add a new movie to the database (ID is auto-assigned)
+  - Add a new movie (ID is auto-assigned)
   - **Request Body:**
 ```json
 {
@@ -130,7 +118,7 @@ On first startup, the API will automatically:
   "year": 2024
 }
 ```
-  - **Response:** `201 Created` with the new movie object (including its assigned `id`)
+  - **Response:** `201 Created`
   - **Validation:**
     - `title` and `director`: 1–100 characters
     - `genre`: 1–50 characters
@@ -204,9 +192,9 @@ All endpoints return JSON. Movie objects contain:
 }
 ```
 
-## Sample Movie Database
+## Sample Movie Data
 
-The API auto-seeds with 9 movies on first run:
+The API comes pre-loaded with 9 movies:
 
 | # | Title | Director | Genre | Year |
 |---|-------|----------|-------|------|
@@ -224,7 +212,3 @@ The API auto-seeds with 9 movies on first run:
 
 **Chirag**
 - GitHub: [@ChiragO9](https://github.com/ChiragO9)
-
----
-
-> **Data persistence:** Movie data is stored in a SQLite database locally (`movies.db`) and persists across server restarts. In production, a PostgreSQL database is used via the `DATABASE_URL` environment variable.
