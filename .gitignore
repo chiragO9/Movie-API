@@ -18,3 +18,11 @@ ENV/
 fastapi-testing
 main2.py
 db.py
+
+# Temporary hold on project for basics.
+main.py
+main2.py
+models.py
+movies.db
+database.py
+db.py
